@@ -1,7 +1,8 @@
 <template>
   <th
-    :style="{width: vuetable.scrollBarWidth}" 
+    :style="{width: vuetable.scrollBarWidth}"
     class="vuetable-th-gutter"
+    v-if="vuetable.scrollBarWidth === '0px'"
   ></th>
 </template>
 
@@ -14,7 +15,6 @@ export default {
       return this.$parent
     }
   }
-  
 }
 </script>
 
