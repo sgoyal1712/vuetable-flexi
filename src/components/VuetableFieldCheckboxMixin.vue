@@ -3,7 +3,11 @@ import VuetableFieldMixin from './VuetableFieldMixin.vue'
 
 export default {
   mixins: [VuetableFieldMixin],
-
+  data() {
+    return {
+      isHeaderIndeterminate: false,
+    }
+  },
   methods: {
     toggleCheckbox(dataItem, event) {
       this.vuetable.onCheckboxToggled(event.target.checked, this.rowField.name, dataItem)
@@ -18,27 +22,26 @@ export default {
     },
 
     isAllItemsInCurrentPageSelected() {
-      if (! this.vuetable.tableData) return 
+      if (! this.vuetable.tableData) return
 
       let idColumn = this.vuetable.trackBy
-      let checkbox = this.$el.querySelector('input[type=checkbox]')
       let selected = this.vuetable.tableData.filter( (item) => this.vuetable.isSelectedRow(item[idColumn]) )
 
       // count == 0, clear the checkbox
       if (selected.length <= 0) {
-        checkbox.indeterminate = false
+        this.isHeaderIndeterminate = false
         return false
       }
       // count > 0 and count < perPage, set checkbox state to 'indeterminate'
       else if (selected.length < this.vuetable.perPage) {
-        checkbox.indeterminate = true
-        return true
+        this.isHeaderIndeterminate = true
+        return false
       }
       // count == perPage, set checkbox state to 'checked'
       else {
-        checkbox.indeterminate = false
+        this.isHeaderIndeterminate = false
         return true
-      }            
+      }
     }
   }
 }

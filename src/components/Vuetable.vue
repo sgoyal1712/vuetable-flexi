@@ -1,7 +1,7 @@
 <template>
   <div :class="$_css.tableWrapper">
     <div class="vuetable-head-wrapper" v-if="isFixedHeader">
-      <table :class="['vuetable', $_css.tableClass, $_css.tableHeaderClass]">
+      <table :class="['vuetable fixed-header', $_css.tableClass, $_css.tableHeaderClass]">
         <vuetable-col-group :is-header="true"/>
         <thead>
           <slot name="tableHeader" :fields="tableFields">
