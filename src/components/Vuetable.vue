@@ -57,7 +57,9 @@
                     :style="{width: field.width}"
                   >
                     <slot :name="field.name"
-                      :row-data="item" :row-index="itemIndex" :row-field="field"
+                          :row-data="item" :row-index="itemIndex" :row-field="field"
+                          :vuetable="vuetable"
+                          @vuetable:field-event="onFieldEvent"
                     ></slot>
                   </td>
                 </template>
