@@ -1,10 +1,10 @@
 {
   "name": "vuetable-flexi",
-  "version": "2.0.0-beta.8",
+  "version": "2.0.0-beta.10",
   "description": "Datatable component for Vue 2.x",
   "main": "dist/vuetable-2.js",
   "license": "MIT",
-  "author": "Rati Wannapanop <rati.wannapanop@gmail.com>",
+  "author": "Tarun Garg <tarun-garg@outlook.com>",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tarun1793/vuetable-2.git"
