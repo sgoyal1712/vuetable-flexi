@@ -15,7 +15,7 @@
             <td v-for="(field, index) in visibleFields" class="resize-slider">
               <input type="range" min="1" max="100" value="100" style="width: 100%;"
                      class="resize-slider"
-                     v-show="index > 0 && index < (visibleFields.length - 1)"
+                     v-show="index < (visibleFields.length - 1)"
                      @mousedown="resizeCol($event, index)">
             </td>
           </tr>
@@ -38,7 +38,7 @@
           <td v-for="(field, index) in visibleFields" class="resize-slider">
             <input type="range" min="1" max="100" value="100" style="width: 100%;"
                    class="resize-slider"
-                   v-show="index > 0 && index < (visibleFields.length - 1)"
+                   v-show="index < (visibleFields.length - 1)"
                    @mousedown="resizeCol($event, index)">
           </td>
         </tr>
