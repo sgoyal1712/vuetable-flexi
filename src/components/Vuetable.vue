@@ -20,7 +20,7 @@
               <input type="range" min="1" max="100" value="100" style="width: 100%;"
                      class="resize-slider"
                      v-if="index === (visibleFields.length - 1)"
-                     @click.stop="noop" @mousedown.stop="noop">
+                     @click.prevent="noop" @mousedown.prevent="noop">
             </td>
           </tr>
         </thead>
@@ -47,7 +47,7 @@
             <input type="range" min="1" max="100" value="100" style="width: 100%;"
                    class="resize-slider"
                    v-if="index === (visibleFields.length - 1)"
-                   @click.stop="noop" @mousedown.stop="noop">
+                   @click.prevent="noop" @mousedown.prevent="noop">
           </td>
         </tr>
       </thead>
