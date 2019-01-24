@@ -15,8 +15,12 @@
             <td v-for="(field, index) in visibleFields" class="resize-slider">
               <input type="range" min="1" max="100" value="100" style="width: 100%;"
                      class="resize-slider"
-                     v-show="index < (visibleFields.length - 1)"
+                     v-if="index < (visibleFields.length - 1)"
                      @mousedown="resizeCol($event, index)">
+              <input type="range" min="1" max="100" value="100" style="width: 100%;"
+                     class="resize-slider"
+                     v-if="index === (visibleFields.length - 1)"
+                     @click.stop="noop" @mousedown.stop="noop">
             </td>
           </tr>
         </thead>
@@ -38,8 +42,12 @@
           <td v-for="(field, index) in visibleFields" class="resize-slider">
             <input type="range" min="1" max="100" value="100" style="width: 100%;"
                    class="resize-slider"
-                   v-show="index < (visibleFields.length - 1)"
+                   v-if="index < (visibleFields.length - 1)"
                    @mousedown="resizeCol($event, index)">
+            <input type="range" min="1" max="100" value="100" style="width: 100%;"
+                   class="resize-slider"
+                   v-if="index === (visibleFields.length - 1)"
+                   @click.stop="noop" @mousedown.stop="noop">
           </td>
         </tr>
       </thead>
@@ -1204,6 +1212,10 @@ export default {
       this.tablePagination = null
       this.fireEvent('data-reset')
     },
+
+    noop() {
+
+    }
   }, // end: methods
 }
 </script>
