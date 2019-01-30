@@ -4,6 +4,7 @@
   >
     <input type="checkbox"
       @change="toggleAllCheckbox($event)"
+      :indeterminate.prop="isHeaderIndeterminate"
       :checked="isAllItemsInCurrentPageSelected()"
     >
   </th>

@@ -1,7 +1,7 @@
 <template>
   <div :class="$_css.tableWrapper">
     <div class="vuetable-head-wrapper" v-if="isFixedHeader">
-      <table :class="['vuetable', $_css.tableClass, $_css.tableHeaderClass]">
+      <table :class="['vuetable fixed-header', $_css.tableClass, $_css.tableHeaderClass]">
         <vuetable-col-group :is-header="true"/>
         <thead>
           <slot name="tableHeader" :fields="tableFields">
@@ -11,6 +11,18 @@
               ></component>
             </template>
           </slot>
+          <tr v-if="columnResize">
+            <td v-for="(field, index) in visibleFields" class="resize-slider">
+              <input type="range" min="1" max="100" value="100" style="width: 100%;"
+                     class="resize-slider"
+                     v-if="index < (visibleFields.length - 1)"
+                     @mousedown="resizeCol($event, index)">
+              <input type="range" min="1" max="100" value="100" style="width: 100%;"
+                     class="resize-slider"
+                     v-if="index === (visibleFields.length - 1)"
+                     @click.prevent="noop" @mousedown.prevent="noop">
+            </td>
+          </tr>
         </thead>
       </table>
     </div>
@@ -19,16 +31,28 @@
       <table :class="['vuetable', isFixedHeader ? 'fixed-header' : '', $_css.tableClass, $_css.tableBodyClass]">
       <vuetable-col-group/>
       <thead v-if="!isFixedHeader">
-      <slot name="tableHeader" :fields="tableFields">
-        <template v-for="(header, headerIndex) in headerRows">
-          <component :is="header" :key="headerIndex"
-            @vuetable:header-event="onHeaderEvent"
-          ></component>
-        </template>
-      </slot>
+        <slot name="tableHeader" :fields="tableFields">
+          <template v-for="(header, headerIndex) in headerRows">
+            <component :is="header" :key="headerIndex"
+              @vuetable:header-event="onHeaderEvent"
+            ></component>
+          </template>
+        </slot>
+        <tr v-if="columnResize">
+          <td v-for="(field, index) in visibleFields" class="resize-slider">
+            <input type="range" min="1" max="100" value="100" style="width: 100%;"
+                   class="resize-slider"
+                   v-if="index < (visibleFields.length - 1)"
+                   @mousedown="resizeCol($event, index)">
+            <input type="range" min="1" max="100" value="100" style="width: 100%;"
+                   class="resize-slider"
+                   v-if="index === (visibleFields.length - 1)"
+                   @click.prevent="noop" @mousedown.prevent="noop">
+          </td>
+        </tr>
       </thead>
       <tfoot>
-        <slot name="tableFooter" :fields="tableFields"></slot>
+        <slot name="tableFooter" :vuetable="vuetable" :fields="tableFields"></slot>
       </tfoot>
       <tbody v-cloak class="vuetable-body">
         <template v-for="(item, itemIndex) in tableData">
@@ -57,7 +81,9 @@
                     :style="{width: field.width}"
                   >
                     <slot :name="field.name"
-                      :row-data="item" :row-index="itemIndex" :row-field="field"
+                          :row-data="item" :row-index="itemIndex" :row-field="field"
+                          :vuetable="vuetable"
+                          @vuetable:field-event="onFieldEvent"
                     ></slot>
                   </td>
                 </template>
@@ -92,12 +118,14 @@
           </template>
         </template>
         <template v-if="displayEmptyDataRow">
-          <tr>
-            <td :colspan="countVisibleFields"
-              class="vuetable-empty-result"
-              v-html="noDataTemplate"
-            ></td>
-          </tr>
+          <slot name="noDataTemplate" :vuetable="vuetable">
+            <tr>
+              <td :colspan="countVisibleFields"
+                class="vuetable-empty-result"
+                v-html="noDataTemplate"
+              ></td>
+            </tr>
+          </slot>
         </template>
         <template v-if="lessThanMinRows">
           <tr v-for="i in blankRows" class="blank-row" :key="i">
@@ -313,6 +341,10 @@ export default {
       default() {
         return 'vuetable:'
       }
+    },
+    columnResize: {
+      type: Boolean,
+      default: false,
     }
   },
 
@@ -346,10 +378,13 @@ export default {
     hasRowIdentifier () {
       return this.tableData && typeof(this.tableData[0][this.trackBy]) !== 'undefined'
     },
-    countVisibleFields () {
+    visibleFields() {
       return this.tableFields.filter( (field) => {
         return field.visible
-      }).length
+      })
+    },
+    countVisibleFields () {
+      return this.visibleFields.length
     },
     countTableData () {
       if (this.tableData === null) {
@@ -452,7 +487,37 @@ export default {
 },
 
   methods: {
-
+    resizeCol (event, index) {
+      event.preventDefault();
+      const rightHead = index < this.countVisibleFields - 1
+        ? this.visibleFields[index + 1] : null;
+      const currHead = this.visibleFields[index];
+      const units = currHead.width.replace(/[0-9.]+/g, '');
+      const oldWidth = parseFloat(currHead.width.replace(units, ''));
+      const widthInPx = window.getComputedStyle(event.target).getPropertyValue('width');
+      const unitsToPx = parseFloat(widthInPx.replace('px', '')) / oldWidth;
+      const startX = event.pageX;
+      const onMouseMove = function _onMouseMove(e) {
+        e.preventDefault();
+        const delta = e.pageX - startX;
+        if(Math.abs(delta) < 5) return;
+        const deltaInOldUnits = delta / unitsToPx;
+        const newWidth = (oldWidth + deltaInOldUnits).toFixed(2);
+        if(newWidth < (currHead.minWidth || 5)) return;
+        currHead.width = `${(newWidth)}${units}`;
+        if(units === 'px' && rightHead) {
+            rightHead.width = `${(rightHead.width - deltaInOldUnits)}${units}`;
+        }
+      };
+      const onMouseUp = () => {
+        document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('mouseup', onMouseUp);
+        const rightHeadWidth = rightHead ? rightHead.width : null;
+        this.fireEvent('col-resize', index, currHead.width, rightHeadWidth);
+      };
+      document.addEventListener('mousemove', onMouseMove);
+      document.addEventListener('mouseup', onMouseUp);
+    },
     getScrollBarWidth () {
       const outer = document.createElement('div');
       const inner = document.createElement('div');
@@ -784,7 +849,7 @@ export default {
     },
 
     fieldIsInSortOrderPosition (field, i) {
-      return this.sortOrder[i].field === field.name && this.sortOrder[i].sortField === field.sortField
+      return this.sortOrder[i].sortField === field.sortField
     },
 
     orderBy (field, event) {
@@ -1103,7 +1168,7 @@ export default {
         this.unselectId(key)
       }
 
-      this.fireEvent('checkbox-toggled', isChecked, fieldName)
+      this.fireEvent('checkbox-toggled', isChecked, fieldName, dataItem)
     },
 
     onCheckboxToggledAll (isChecked) {
@@ -1149,6 +1214,10 @@ export default {
       this.tablePagination = null
       this.fireEvent('data-reset')
     },
+
+    noop() {
+
+    }
   }, // end: methods
 }
 </script>
@@ -1183,5 +1252,82 @@ export default {
   }
   .vuetable-empty-result {
     text-align: center;
+  }
+
+  input.resize-slider {
+    -webkit-appearance: none;
+    width: 100%;
+    margin: 5px 0;
+  }
+
+  input.resize-slider::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 5px;
+    background: #999999;
+  }
+  input.resize-slider::-webkit-slider-thumb {
+    box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+    height: 15px;
+    width: 4px;
+    border-radius: 1px;
+    background: #000000;
+    cursor: ew-resize;
+    -webkit-appearance: none;
+    margin-top: -5px;
+  }
+  input.resize-slider:focus::-webkit-slider-runnable-track {
+    background: #ebebeb;
+  }
+  input.resize-slider::-moz-range-track {
+    width: 100%;
+    height: 5px;
+    box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+    background: #999999;
+  }
+  input.resize-slider::-moz-range-thumb {
+    box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+    border: 0px solid #000000;
+    height: 15px;
+    width: 4px;
+    border-radius: 1px;
+    background: #000000;
+    cursor: ew-resize;
+  }
+  input.resize-slider::-ms-track {
+    width: 100%;
+    height: 5px;
+    background: transparent;
+    border-color: transparent;
+    color: transparent;
+  }
+  input.resize-slider::-ms-fill-lower {
+    background: #474747;
+    border: 0px solid #010101;
+    border-radius: 4px;
+    box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+  }
+  input.resize-slider::-ms-fill-upper {
+    background: #999999;
+    border: 0px solid #010101;
+    border-radius: 4px;
+    box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+  }
+  input.resize-slider::-ms-thumb {
+    box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+    border: 0px solid #000000;
+    height: 15px;
+    width: 4px;
+    border-radius: 1px;
+    background: #000000;
+    cursor: ew-resize;
+  }
+  input.resize-slider:focus::-ms-fill-lower {
+    background: #999999;
+  }
+  input.resize-slider:focus::-ms-fill-upper {
+    background: #ebebeb;
+  }
+  td.resize-slider {
+    padding: 4px 0!important;
   }
 </style>

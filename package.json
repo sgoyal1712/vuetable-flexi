@@ -1,13 +1,13 @@
 {
-  "name": "vuetable-2",
-  "version": "2.0.0-beta.4",
+  "name": "vuetable-flexi",
+  "version": "2.0.0-beta.14",
   "description": "Datatable component for Vue 2.x",
   "main": "dist/vuetable-2.js",
   "license": "MIT",
-  "author": "Rati Wannapanop <rati.wannapanop@gmail.com>",
+  "author": "Tarun Garg <tarun-garg@outlook.com>",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ratiw/vuetable-2.git"
+    "url": "git+https://github.com/tarun1793/vuetable-2.git"
   },
   "private": false,
   "keywords": [
@@ -70,7 +70,7 @@
     "file-loader": "^0.11.1",
     "friendly-errors-webpack-plugin": "1.7.0",
     "html-webpack-plugin": "^2.30.1",
-    "http-proxy-middleware": "^0.17.3",
+    "http-proxy-middleware": "^0.19.1",
     "inject-loader": "^3.0.1",
     "jest": "22.1.4",
     "jest-vue-preprocessor": "1.3.1",

@@ -8,8 +8,8 @@
       >
       </template>
     </template>
-    <col v-if="isHeader && vuetable.scrollVisible" 
-      :style="{width: vuetable.scrollBarWidth}" 
+    <col v-if="isHeader && vuetable.scrollVisible && vuetable.scrollBarWidth !== '0px'"
+      :style="{width: vuetable.scrollBarWidth}"
       class="vuetable-col-gutter"
     >
   </colgroup>
