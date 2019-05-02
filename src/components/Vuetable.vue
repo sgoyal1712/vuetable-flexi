@@ -57,11 +57,18 @@
       <tbody v-cloak class="vuetable-body">
         <template v-for="(item, itemIndex) in tableData">
           <tr :item-index="itemIndex"
-            :key="itemIndex"
-            :class="onRowClass(item, itemIndex)"
-            @click="onRowClicked(item, itemIndex, $event)"
-            @dblclick="onRowDoubleClicked(item, itemIndex, $event)"
-            @mouseover="onMouseOver(item, itemIndex, $event)"
+              :key="itemIndex"
+              :class="onRowClass(item, itemIndex)"
+              @click="onRowClicked(item, itemIndex, $event)"
+              @dblclick="onRowDoubleClicked(item, itemIndex, $event)"
+              @mouseover="onMouseOver(item, itemIndex, $event)"
+              :draggable="allowDragdrop"
+              @dragover="fireEvent('dragover', item, itemIndex, $event)"
+              @dragenter="fireEvent('dragenter', item, itemIndex, $event)"
+              @dragleave="fireEvent('dragleave', item, itemIndex, $event)"
+              @dragstart="fireEvent('dragstart', item, itemIndex, $event)"
+              @dragend="fireEvent('dragend', item, itemIndex, $event)"
+              @drop="fireEvent('drop', item, itemIndex, $event)"
           >
             <template v-for="(field, fieldIndex) in tableFields">
               <template v-if="field.visible">
@@ -156,6 +163,10 @@ export default {
   },
 
   props: {
+    allowDragdrop: {
+      type: Boolean,
+      default: false,
+    },
     fields: {
       type: Array,
       required: true
