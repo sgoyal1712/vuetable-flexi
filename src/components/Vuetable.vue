@@ -11,7 +11,7 @@
               ></component>
             </template>
           </slot>
-          <tr v-if="columnResize">
+          <!-- <tr v-if="columnResize">
             <td v-for="(field, index) in visibleFields" class="resize-slider">
               <input type="range" min="1" max="100" value="100" style="width: 100%;"
                      class="resize-slider"
@@ -22,7 +22,7 @@
                      v-if="index === (visibleFields.length - 1)"
                      @click.prevent="noop" @mousedown.prevent="noop">
             </td>
-          </tr>
+          </tr> -->
         </thead>
       </table>
     </div>
@@ -498,7 +498,9 @@ export default {
 },
 
   methods: {
+
     resizeCol (event, index) {
+      console.log("resize col called");
       event.preventDefault();
       const rightHead = index < this.countVisibleFields - 1
         ? this.visibleFields[index + 1] : null;
@@ -521,6 +523,7 @@ export default {
         }
       };
       const onMouseUp = () => {
+        console.log("mouse up called");
         document.removeEventListener('mousemove', onMouseMove);
         document.removeEventListener('mouseup', onMouseUp);
         const rightHeadWidth = rightHead ? rightHead.width : null;
@@ -1237,6 +1240,30 @@ export default {
   [v-cloak] {
     display: none;
   }
+  [class*='vuetable-th-'] {
+    border-style: solid !important;
+    padding: 0px !important;
+    position: relative;
+    line-height: 50px;
+  }
+  [class*='vuetable-th-']::before {
+    content: "";
+    min-width: 10px;
+    display: inline-block;
+    height: 100%;
+    cursor: col-resize;
+    float: left;
+  }
+
+  [class*='vuetable-th-']::after {
+    content: "";
+    min-width: 10px;
+    display: inline-block;
+    height: 100%;
+    cursor: col-resize;
+    float: right;
+  }
+
   table.vuetable.fixed-header {
     table-layout: fixed;
   }
