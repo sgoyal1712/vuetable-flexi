@@ -54,12 +54,6 @@ export default {
     VuetableColGutter
   },
 
-  data(){
-    return {
-      isMouseDown: false
-    }
-  },
-
   computed: {
     sortOrder() {
       return this.$parent.sortOrder
