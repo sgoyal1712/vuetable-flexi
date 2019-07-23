@@ -12,7 +12,8 @@
             :class="headerClass('vuetable-th-component', field)"
             :style="{width: field.width}"
             @vuetable:header-event="vuetable.onHeaderEvent"
-            @mousedown="onColumnHeaderClicked(field, $event)"
+            @mousedown="mouseDownEvent(field, $event)"
+            @click="onColumnHeaderClicked(field, $event)"
           ></component>
         </template>
         <template v-else-if="vuetable.isFieldSlot(field.name)">
@@ -20,16 +21,18 @@
               :key="fieldIndex"
               :style="{width: field.width}"
               v-html="renderTitle(field)"
-              @mousedown="onColumnHeaderClicked(field, $event)"
+              @mousedown="mouseDownEvent(field, $event)"
+              @click="onColumnHeaderClicked(field, $event)"
           ></th>
         </template>
         <template v-else>
-          <th @mousedown="onColumnHeaderClicked(field, $event)"
-              :key="fieldIndex"
+          <th :key="fieldIndex"
               :id="'_' + field.name"
               :class="headerClass('vuetable-th', field)"
               :style="{width: field.width}"
               v-html="renderTitle(field)"
+              @mousedown="mouseDownEvent(field, $event)"
+              @click="onColumnHeaderClicked(field, $event)"
           ></th>
         </template>
       </template>
@@ -49,6 +52,12 @@ export default {
     'vuetable-field-handle'  : VuetableFieldHandle,
     'vuetable-field-sequence': VuetableFieldSequence,
     VuetableColGutter
+  },
+
+  data(){
+    return {
+      isMouseDown: false
+    }
   },
 
   computed: {
@@ -187,17 +196,28 @@ export default {
     },
 
     onColumnHeaderClicked (field, event) {
-      const visibleFields = this.vuetable.tableFields.filter(field => field.visible);
-      console.log(visibleFields);
-      const index = visibleFields.findIndex(visibleField => visibleField.id === field.id);
-      if(event.offsetX <= 10 ) {
-        this.vuetable.resizeCol (event, index - 1);
-      } else if (event.target.offsetWidth - event.offsetX <= 10) {
-        this.vuetable.resizeCol (event, index);
-      } else {
-        this.vuetable.orderBy(field, event)
+      if(this.vuetable.isDragged){
+        this.vuetable.isDragged = false;
+      }
+      else{
+        if(event.offsetX > 10 && event.target.offsetWidth - event.offsetX > 10){
+          this.vuetable.orderBy(field, event);
+        }
       }
     },
+
+    mouseDownEvent (field, event) {
+      if(event.offsetX <= 10 || event.target.offsetWidth - event.offsetX <= 10){
+        const visibleFields = this.vuetable.tableFields.filter(field => field.visible);
+        const index = visibleFields.findIndex(visibleField => visibleField.id === field.id);
+        if(event.offsetX <= 10 ) {
+          this.vuetable.resizeCol (event, index - 1);
+        } else {
+          this.vuetable.resizeCol (event, index);
+        }
+      }
+    }
+
 
   }
 }

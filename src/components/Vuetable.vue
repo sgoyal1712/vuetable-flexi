@@ -370,7 +370,8 @@ export default {
       lastScrollPosition: 0,
       scrollBarWidth: '17px', //chrome default
       scrollVisible: false,
-      $_css: {}
+      $_css: {},
+      isDragged: false
     }
   },
 
@@ -500,8 +501,8 @@ export default {
   methods: {
 
     resizeCol (event, index) {
-      console.log("resize col called");
       event.preventDefault();
+      this.isDragged = true;
       const rightHead = index < this.countVisibleFields - 1
         ? this.visibleFields[index + 1] : null;
       const currHead = this.visibleFields[index];
@@ -523,7 +524,6 @@ export default {
         }
       };
       const onMouseUp = () => {
-        console.log("mouse up called");
         document.removeEventListener('mousemove', onMouseMove);
         document.removeEventListener('mouseup', onMouseUp);
         const rightHeadWidth = rightHead ? rightHead.width : null;
@@ -1246,21 +1246,19 @@ export default {
     position: relative;
     line-height: 50px;
   }
-  [class*='vuetable-th-']::before {
+  [class*='vuetable-th-']::before, [class*='vuetable-th-']::after {
     content: "";
     min-width: 10px;
     display: inline-block;
     height: 100%;
     cursor: col-resize;
+  }
+
+  [class*='vuetable-th-']::before { 
     float: left;
   }
 
   [class*='vuetable-th-']::after {
-    content: "";
-    min-width: 10px;
-    display: inline-block;
-    height: 100%;
-    cursor: col-resize;
     float: right;
   }
 
