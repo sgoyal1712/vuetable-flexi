@@ -62,6 +62,7 @@
               @click="onRowClicked(item, itemIndex, $event)"
               @dblclick="onRowDoubleClicked(item, itemIndex, $event)"
               @mouseover="onMouseOver(item, itemIndex, $event)"
+              @mouseout="onMouseOut(item, itemIndex, $event)"
               :draggable="allowDragdrop"
               @dragover="fireEvent('dragover', item, itemIndex, $event)"
               @dragenter="fireEvent('dragenter', item, itemIndex, $event)"
@@ -1157,6 +1158,10 @@ export default {
 
     onMouseOver (dataItem, dataIndex, event) {
       this.fireEvent('row-mouseover', { data: dataItem, index: dataIndex, event: event })
+    },
+
+    onMouseOut (dataItem, dataIndex, event) {
+      this.fireEvent('row-mouseout', { data: dataItem, index: dataIndex, event: event })
     },
 
     onFieldEvent (type, payload) {
