@@ -61,8 +61,8 @@
               :class="onRowClass(item, itemIndex)"
               @click="onRowClicked(item, itemIndex, $event)"
               @dblclick="onRowDoubleClicked(item, itemIndex, $event)"
-              @mouseover="onMouseOver(item, itemIndex, $event)"
-              @mouseout="onMouseOut(item, itemIndex, $event)"
+              @mouseover="onMouseOver(item, itemIndex, $event, tableFields)"
+              @mouseout="onMouseOut(item, itemIndex, $event, tableFields)"
               :draggable="allowDragdrop"
               @dragover="fireEvent('dragover', item, itemIndex, $event)"
               @dragenter="fireEvent('dragenter', item, itemIndex, $event)"
@@ -1156,12 +1156,12 @@ export default {
       this.fireEvent('cell-rightclicked', { data: dataItem, index: dataIndex, field: field, event: event })
     },
 
-    onMouseOver (dataItem, dataIndex, event) {
-      this.fireEvent('row-mouseover', { data: dataItem, index: dataIndex, event: event })
+    onMouseOver (dataItem, dataIndex, event, tableFields) {
+      this.fireEvent('row-mouseover', { data: dataItem, index: dataIndex, event: event, fields: tableFields})
     },
 
-    onMouseOut (dataItem, dataIndex, event) {
-      this.fireEvent('row-mouseout', { data: dataItem, index: dataIndex, event: event })
+    onMouseOut (dataItem, dataIndex, event, tableFields) {
+      this.fireEvent('row-mouseout', { data: dataItem, index: dataIndex, event: event, fields: tableFields})
     },
 
     onFieldEvent (type, payload) {
