@@ -12,7 +12,6 @@
             :class="headerClass('vuetable-th-component', field)"
             :style="{width: field.width}"
             @vuetable:header-event="vuetable.onHeaderEvent"
-            @mousedown="mouseDownEvent(field, $event)"
             @click="onColumnHeaderClicked(field, $event)"
           ></component>
         </template>
@@ -21,18 +20,16 @@
               :key="fieldIndex"
               :style="{width: field.width}"
               v-html="renderTitle(field)"
-              @mousedown="mouseDownEvent(field, $event)"
               @click="onColumnHeaderClicked(field, $event)"
           ></th>
         </template>
         <template v-else>
-          <th :key="fieldIndex"
-              :id="'_' + field.name"
-              :class="headerClass('vuetable-th', field)"
-              :style="{width: field.width}"
-              v-html="renderTitle(field)"
-              @mousedown="mouseDownEvent(field, $event)"
-              @click="onColumnHeaderClicked(field, $event)"
+          <th @click="onColumnHeaderClicked(field, $event)"
+            :key="fieldIndex"
+            :id="'_' + field.name"
+            :class="headerClass('vuetable-th', field)"
+            :style="{width: field.width}"
+            v-html="renderTitle(field)"
           ></th>
         </template>
       </template>
@@ -140,7 +137,7 @@ export default {
       let title = this.getTitle(field)
 
       if (title.length > 0 && this.isInCurrentSortGroup(field) || this.hasSortableIcon(field)) {
-        let style = `opacity:${this.sortIconOpacity(field)};position:absolute;right: 15px; top: 18px;`
+        let style = `opacity:${this.sortIconOpacity(field)};position:relative;float:right`
         let iconTag = this.vuetable.showSortIcons ? this.renderIconTag(['sort-icon', this.sortIcon(field)], `style="${style}"`) : ''
         return title + ' ' + iconTag
       }
@@ -190,29 +187,8 @@ export default {
     },
 
     onColumnHeaderClicked (field, event) {
-      if(this.vuetable.isDragged){
-        this.vuetable.isDragged = false;
-      }
-      else{
-        if(event.offsetX > 10 && event.target.offsetWidth - event.offsetX > 10){
-          this.vuetable.orderBy(field, event);
-        }
-      }
-    },
-
-    mouseDownEvent (field, event) {
-      if(event.offsetX <= 10 || event.target.offsetWidth - event.offsetX <= 10){
-        const visibleFields = this.vuetable.tableFields.filter(field => field.visible);
-        const index = visibleFields.findIndex(visibleField => visibleField.id === field.id);
-        if(event.offsetX <= 10 ) {
-          this.vuetable.resizeCol (event, index - 1);
-        } else {
-          this.vuetable.resizeCol (event, index);
-        }
-      }
+      this.vuetable.orderBy(field, event)
     }
-
-
   }
 }
 </script>
