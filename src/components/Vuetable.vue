@@ -55,7 +55,8 @@
         <slot name="tableFooter" :vuetable="vuetable" :fields="tableFields"></slot>
       </tfoot>
       <tbody v-cloak class="vuetable-body">
-        <template v-for="(item, itemIndex) in tableData">
+      <recycle-scroller :items="tableData" item-height="40" content-tag="ul">
+        <template v-for="(item, itemIndex) in items">
           <tr :item-index="itemIndex"
               :key="itemIndex"
               :class="onRowClass(item, itemIndex)"
@@ -142,6 +143,7 @@
             </template>
           </tr>
         </template>
+      </recycle-scroller>
       </tbody>
       </table>
     </div>
@@ -154,6 +156,7 @@ import VuetableRowHeader from './VuetableRowHeader'
 import VuetableColGroup from './VuetableColGroup'
 import CssSemanticUI from './VuetableCssSemanticUI.js'
 import InfiniteScrollMixin from './VuetableInfiniteScrollMixin'
+import { RecycleScroller } from 'vue-virtual-scroller'
 
 export default {
   name: 'Vuetable',
@@ -161,6 +164,7 @@ export default {
   components: {
     VuetableRowHeader,
     VuetableColGroup,
+    RecycleScroller
   },
 
   props: {
@@ -362,6 +366,7 @@ export default {
 
   data () {
     return {
+      items: [],
       tableFields: [],
       tableData: null,
       tablePagination: null,
@@ -438,6 +443,7 @@ export default {
   },
 
   created() {
+    console.log('in created function items', this.items)
     this.mergeCss()
     this.normalizeFields()
     this.normalizeSortOrder()

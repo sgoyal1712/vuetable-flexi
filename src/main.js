@@ -1,3 +1,4 @@
+import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import Vue from 'vue'
 import Vuetable from './components/Vuetable.vue'
 import VuetablePagination from './components/VuetablePagination.vue'
