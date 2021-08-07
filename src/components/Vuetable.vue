@@ -55,29 +55,29 @@
         <slot name="tableFooter" :vuetable="vuetable" :fields="tableFields"></slot>
       </tfoot>
       <tbody v-cloak class="vuetable-body">
-      <recycle-scroller :items="tableData" item-height="40" content-tag="ul">
-        <template v-for="(item, itemIndex) in items">
-          <tr :item-index="itemIndex"
-              :key="itemIndex"
-              :class="onRowClass(item, itemIndex)"
-              @click="onRowClicked(item, itemIndex, $event)"
-              @dblclick="onRowDoubleClicked(item, itemIndex, $event)"
-              @mouseover="onMouseOver(item, itemIndex, $event)"
-              @mouseout="onMouseOut(item, itemIndex, $event)"
+        <recycle-scroller :items="tableData" :min-item-size="54" class="scroller">
+        <template slot-scope="{ item, index, active }">
+          <tr :item-index="index"
+              :key="index"
+              :class="onRowClass(item, index)"
+              @click="onRowClicked(item, index, $event)"
+              @dblclick="onRowDoubleClicked(item, index, $event)"
+              @mouseover="onMouseOver(item, index, $event)"
+              @mouseout="onMouseOut(item, index, $event)"
               :draggable="allowDragdrop"
-              @dragover="fireEvent('dragover', item, itemIndex, $event)"
-              @dragenter="fireEvent('dragenter', item, itemIndex, $event)"
-              @dragleave="fireEvent('dragleave', item, itemIndex, $event)"
-              @dragstart="fireEvent('dragstart', item, itemIndex, $event)"
-              @dragend="fireEvent('dragend', item, itemIndex, $event)"
-              @drop="fireEvent('drop', item, itemIndex, $event)"
+              @dragover="fireEvent('dragover', item, index, $event)"
+              @dragenter="fireEvent('dragenter', item, index, $event)"
+              @dragleave="fireEvent('dragleave', item, index, $event)"
+              @dragstart="fireEvent('dragstart', item, index, $event)"
+              @dragend="fireEvent('dragend', item, index, $event)"
+              @drop="fireEvent('drop', item, index, $event)"
           >
             <template v-for="(field, fieldIndex) in tableFields">
               <template v-if="field.visible">
                 <template v-if="isFieldComponent(field.name)">
                   <component :is="field.name"
                     :key="fieldIndex"
-                    :row-data="item" :row-index="itemIndex" :row-field="field"
+                    :row-data="item" :row-index="index" :row-field="field"
                     :vuetable="vuetable"
                     :class="bodyClass('vuetable-component', field)"
                     :style="{width: field.width}"
@@ -90,7 +90,7 @@
                     :style="{width: field.width}"
                   >
                     <slot :name="field.name"
-                          :row-data="item" :row-index="itemIndex" :row-field="field"
+                          :row-data="item" :row-index="index" :row-field="field"
                           :vuetable="vuetable"
                           @vuetable:field-event="onFieldEvent"
                     ></slot>
@@ -101,24 +101,24 @@
                     :key="fieldIndex"
                     :style="{width: field.width}"
                     v-html="renderNormalField(field, item)"
-                    @click="onCellClicked(item, itemIndex, field, $event)"
-                    @dblclick="onCellDoubleClicked(item, itemIndex, field, $event)"
-                    @contextmenu="onCellRightClicked(item, itemIndex, field, $event)"
+                    @click="onCellClicked(item, index, field, $event)"
+                    @dblclick="onCellDoubleClicked(item, index, field, $event)"
+                    @contextmenu="onCellRightClicked(item, index, field, $event)"
                   ></td>
                 </template>
               </template>
             </template>
           </tr>
           <template v-if="useDetailRow">
-            <transition :name="detailRowTransition" :key="itemIndex">
+            <transition :name="detailRowTransition" :key="index">
               <tr v-if="isVisibleDetailRow(item[trackBy])"
-                @click="onDetailRowClick(item, itemIndex, $event)"
-                :class="onDetailRowClass(item, itemIndex)"
+                @click="onDetailRowClick(item, index, $event)"
+                :class="onDetailRowClass(item, index)"
               >
                 <td :colspan="countVisibleFields">
                   <component :is="detailRowComponent"
                     :row-data="item"
-                    :row-index="itemIndex"
+                    :row-index="index"
                     :options="detailRowOptions"
                   ></component>
                 </td>
@@ -143,7 +143,7 @@
             </template>
           </tr>
         </template>
-      </recycle-scroller>
+        </recycle-scroller>
       </tbody>
       </table>
     </div>
@@ -156,7 +156,6 @@ import VuetableRowHeader from './VuetableRowHeader'
 import VuetableColGroup from './VuetableColGroup'
 import CssSemanticUI from './VuetableCssSemanticUI.js'
 import InfiniteScrollMixin from './VuetableInfiniteScrollMixin'
-import { RecycleScroller } from 'vue-virtual-scroller'
 
 export default {
   name: 'Vuetable',
@@ -164,7 +163,6 @@ export default {
   components: {
     VuetableRowHeader,
     VuetableColGroup,
-    RecycleScroller
   },
 
   props: {
@@ -366,7 +364,6 @@ export default {
 
   data () {
     return {
-      items: [],
       tableFields: [],
       tableData: null,
       tablePagination: null,
@@ -389,7 +386,6 @@ export default {
     },
     dataIsAvailable () {
       if ( ! this.tableData) return false
-
       return this.tableData.length > 0
     },
     hasRowIdentifier () {
@@ -443,7 +439,6 @@ export default {
   },
 
   created() {
-    console.log('in created function items', this.items)
     this.mergeCss()
     this.normalizeFields()
     this.normalizeSortOrder()
@@ -638,6 +633,7 @@ export default {
 
       if (Array.isArray(data)) {
         this.tableData = data
+        console.log('in created function items', this.tableData)
         this.fireEvent('loaded')
         return
       }

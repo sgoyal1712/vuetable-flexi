@@ -4,7 +4,7 @@ import Vuetable from './components/Vuetable.vue'
 import VuetablePagination from './components/VuetablePagination.vue'
 import VuetablePaginationDropdown from './components/VuetablePaginationDropdown.vue'
 import VuetablePaginationInfo from './components/VuetablePaginationInfo.vue'
-import axios from 'axios'
+import { RecycleScroller } from 'vue-virtual-scroller'
 
 import VuetableFieldCheckbox from './components/VuetableFieldCheckbox.vue'
 import VuetableFieldHandle from './components/VuetableFieldHandle'
@@ -13,6 +13,7 @@ import VuetableFieldSequence from './components/VuetableFieldSequence.vue'
 Vue.component('vuetable-field-checkbox', VuetableFieldCheckbox)
 Vue.component('vuetable-field-handle', VuetableFieldHandle)
 Vue.component('vuetable-field-sequence', VuetableFieldSequence)
+Vue.component('recycle-scroller', RecycleScroller)
 
 let E_SERVER_ERROR = 'Error communicating with the server'
 
