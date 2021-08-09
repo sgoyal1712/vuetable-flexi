@@ -55,7 +55,7 @@
         <slot name="tableFooter" :vuetable="vuetable" :fields="tableFields"></slot>
       </tfoot>
       <tbody v-cloak class="vuetable-body">
-        <recycle-scroller :items="tableData" :min-item-size="54" class="scroller">
+        <RecycleScroller :items="tableData" :min-item-size="54" class="scroller">
         <template slot-scope="{ item, index, active }">
           <tr :item-index="index"
               :key="index"
@@ -126,6 +126,7 @@
             </transition>
           </template>
         </template>
+        </RecycleScroller>
         <template v-if="displayEmptyDataRow">
           <slot name="noDataTemplate" :vuetable="vuetable">
             <tr>
@@ -143,7 +144,6 @@
             </template>
           </tr>
         </template>
-        </recycle-scroller>
       </tbody>
       </table>
     </div>
@@ -154,6 +154,7 @@
 import axios from 'axios'
 import VuetableRowHeader from './VuetableRowHeader'
 import VuetableColGroup from './VuetableColGroup'
+import RecycleScroller from './RecycleScroller'
 import CssSemanticUI from './VuetableCssSemanticUI.js'
 import InfiniteScrollMixin from './VuetableInfiniteScrollMixin'
 
@@ -163,6 +164,7 @@ export default {
   components: {
     VuetableRowHeader,
     VuetableColGroup,
+    RecycleScroller
   },
 
   props: {
@@ -365,7 +367,13 @@ export default {
   data () {
     return {
       tableFields: [],
-      tableData: null,
+      tableData: [{
+        id: 1,
+        name: 'sagar'
+      },{
+        id: 2,
+        name: 'goyal'
+      }],
       tablePagination: null,
       currentPage: this.initialPage,
       selectedTo: [],

@@ -1,10 +1,10 @@
-import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
+// import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import Vue from 'vue'
 import Vuetable from './components/Vuetable.vue'
 import VuetablePagination from './components/VuetablePagination.vue'
 import VuetablePaginationDropdown from './components/VuetablePaginationDropdown.vue'
 import VuetablePaginationInfo from './components/VuetablePaginationInfo.vue'
-import { RecycleScroller } from 'vue-virtual-scroller'
+// import { RecycleScroller } from 'vue-virtual-scroller'
 
 import VuetableFieldCheckbox from './components/VuetableFieldCheckbox.vue'
 import VuetableFieldHandle from './components/VuetableFieldHandle'
@@ -13,7 +13,7 @@ import VuetableFieldSequence from './components/VuetableFieldSequence.vue'
 Vue.component('vuetable-field-checkbox', VuetableFieldCheckbox)
 Vue.component('vuetable-field-handle', VuetableFieldHandle)
 Vue.component('vuetable-field-sequence', VuetableFieldSequence)
-Vue.component('recycle-scroller', RecycleScroller)
+// Vue.component('recycle-scroller', RecycleScroller)
 
 let E_SERVER_ERROR = 'Error communicating with the server'
 

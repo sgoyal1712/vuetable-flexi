@@ -42,7 +42,9 @@
   },
   "dependencies": {
     "axios": "^0.15.3",
-    "vue-virtual-scroller": "^1.0.10"
+    "scrollparent": "^2.0.1",
+    "vue-observe-visibility": "^0.4.4",
+    "vue-resize": "^0.4.5"
   },
   "devDependencies": {
     "@vue/test-utils": "1.0.0-beta.10",
